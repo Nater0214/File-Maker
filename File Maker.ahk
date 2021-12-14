@@ -1,6 +1,6 @@
 ;initialization
 #SingleInstance, Force
-SetWorkingDir, C:\Users\Nathan Sellers\OneDrive\Desktop\File Maker Output
+SetWorkingDir, %A_WorkingDir%\File Maker Output
 
 ;starter gui
 Gui, New
