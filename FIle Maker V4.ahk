@@ -87,8 +87,8 @@ If HasCustomText {
         MsgBox, No.
         ExitApp
     }
-    While !(StrLen(Output) = 1024) {
-        Output .= "e"
+    While !(StrLen(Output) = 1024) { ;fill the output to 1024
+        Output .= " "
     }
 } Else If IsCopy {
     Gui, Add, Progress, x5 y5 w500 h20 Range0-1 vFileProgress
