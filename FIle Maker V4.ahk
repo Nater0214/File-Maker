@@ -1,5 +1,5 @@
 ;initialization
-#SingleInstance, Force
+#SingleInstance, Force 
 SetWorkingDir, %A_WorkingDir%\File Maker Output
 
 ;starter gui
