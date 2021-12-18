@@ -27,7 +27,7 @@ If FileExist(Txt) { ;check if the file already exists
     Gui, Show, w360 h50
     IsCopy := True
     HasCustomText := False
-} Else If HasCustomText { ;ask for custom text if the user wanted
+} Else If HasCustomText { ;ask for custom text if the user wanted it
     Gui, New
     Gui, Add, Edit, x5 y5 w350 h100 r6 Limit1024 vCustomText, Put custom text here
     Gui, Add, Button, x5 y105 w350 h20, Done
@@ -133,7 +133,6 @@ If !(IsCopy) {
         GuiControl,, FileProgress, +1
         GuiControl, Text, ProgressLabel, %A_Index%/%FileSize% KB
     }
-    FileAppend, %Output%, %OGName%.%Ext%
 }
 
 GuiControl,, FileProgress, 0
