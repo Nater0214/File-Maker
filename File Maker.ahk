@@ -5,7 +5,7 @@
 If !InStr(FileExist("File Maker Output"), "D")
     MsgBox, Directory doesn't exist: File Maker Output!
     ExitApp
-SetWorkingDir, %A_WorkingDir%\File Maker Output
+SetWorkingDir, %A_ScriptDir%\File Maker Output
 
 ; Starter gui
 Gui, New
