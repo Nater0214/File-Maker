@@ -2,9 +2,10 @@
 #SingleInstance, Force
 
 ; Check if output directory exists
-If !InStr(FileExist("File Maker Output"), "D")
+If !InStr(FileExist("File Maker Output"), "D") {
     MsgBox, Directory doesn't exist: File Maker Output!
     ExitApp
+}
 SetWorkingDir, %A_ScriptDir%\File Maker Output
 
 ; Starter gui
