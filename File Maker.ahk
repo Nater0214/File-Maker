@@ -1,8 +1,13 @@
-;initialization
-#SingleInstance, Force 
+; Initialization
+#SingleInstance, Force
+
+; Check if output directory exists
+If !InStr(FileExist("File Maker Output"), "D")
+    MsgBox, Directory doesn't exist: File Maker Output!
+    ExitApp
 SetWorkingDir, %A_WorkingDir%\File Maker Output
 
-;starter gui
+; Starter gui
 Gui, New
 Gui, Add, Edit, x5 y5 w100 h20 vFileSize, Size
 Gui, Add, DropDownList, x105 y5 w60 h20 r3 Choose1 vUnit, KB|MB|GB
@@ -14,12 +19,12 @@ Gui, Add, Button, x5 y105 w160 h20 Default, OK
 Gui, Show, w170 h130
 Return
 
-ButtonOK: ;ok button pressed
+ButtonOK: ; Ok button pressed
 Gui, Submit
 Txt := Name
 Txt .= "."
 Txt .= Ext
-If FileExist(Txt) { ;check if the file already exists
+If FileExist(Txt) { ; Check if the file already exists
     Gui, New
     Gui, Add, Text, x5 y5 w350 h20, File with the same name found. Do you want to copy that file instead?
     Gui, Add, Button, x5 y20 w175 h20, Yes
@@ -27,7 +32,7 @@ If FileExist(Txt) { ;check if the file already exists
     Gui, Show, w360 h50
     IsCopy := True
     HasCustomText := False
-} Else If HasCustomText { ;ask for custom text if the user wanted it
+} Else If HasCustomText { ; Ask for custom text if the user wanted it
     Gui, New
     Gui, Add, Edit, x5 y5 w350 h100 r6 Limit1024 vCustomText, Put custom text here
     Gui, Add, Button, x5 y105 w350 h20, Done
@@ -39,25 +44,26 @@ If FileExist(Txt) { ;check if the file already exists
 Return
 
 
-ButtonDone: ;label for custom text input
+ButtonDone: ; Label for custom text input
 Gui, Submit
 Gosub, ButtonYes
 Return
 
 
-ButtonYes: ;label for making files
+ButtonYes: ; Label for making files
 Gui, Submit
-If (!((FileSize-FileSize) = 0)) ;check if number
-    ExitApp
-If (!(Mod(FileSize, 1) = 0)) ;check if whole number
-    ExitApp
 
-If (!((Amount-Amount) = 0)) ;check if number
+; Error Detection
+If (!(Mod(FileSize, 1) = 0)) {
+    MsgBox, FileSize must be a whole number!
     ExitApp
-If (!(Mod(Amount, 1) = 0)) ;check if whole number
+}
+If (!(Mod(Amount, 1) = 0)) {
+    MsgBox, Amount must be a whole number!
     ExitApp
+}
 
-;convert units
+; Convert units
 Gui, New
 Output := ""
 If HasCustomText {
@@ -65,7 +71,8 @@ If HasCustomText {
         Gui, Add, Progress, x5 y5 w500 h20 Range0-1024 vFileProgress
         Gui, Add, Text, x5 y30 w500 h20 +Center vProgressLabel, 0/1024 Chars
         Gui, Show, h55 w510
-        Loop % 1024 / StrLen(CustomText) {
+        NeededLen := 1024
+        Loop % NeededLen / StrLen(CustomText) {
             Output .= CustomText
             Txt = StrLen(CustomText)
             GuiControl,, FileProgress, +%Txt%
@@ -76,7 +83,8 @@ If HasCustomText {
         Gui, Add, Progress, x5 y5 w500 h20 Range0-1048576 vFileProgress
         Gui, Add, Text, x5 y30 w500 h20 +Center vProgressLabel, 0/1048576 Chars
         Gui, Show, h55 w510
-        Loop % 1048576 / StrLen(CustomText) {
+        NeededLen := 1048576
+        Loop % NeededLen / StrLen(CustomText) {
             Output .= CustomText
             Txt = StrLen(CustomText)
             GuiControl,, FileProgress, +%Txt%
@@ -87,13 +95,15 @@ If HasCustomText {
         MsgBox, No.
         ExitApp
     }
-    While !(StrLen(Output) = 1024) { ;fill the output to 1024
+    While !(StrLen(Output) = NeededLen) {
         Output .= " "
     }
+
 } Else If IsCopy {
     Gui, Add, Progress, x5 y5 w500 h20 Range0-1 vFileProgress
     Gui, Add, Text, x5 y30 w500 h20 +Center vProgressLabel, 0/1 KB
     Gui, Show, h55 w510
+
 } Else {
     If (Unit = "KB") {
         Gui, Add, Progress, x5 y5 w500 h20 Range0-1 vFileProgress
@@ -121,7 +131,7 @@ If HasCustomText {
     }
 }
 
-;make file(s)
+; Make file(s)
 OGName := Name
 If !(IsCopy) {
     OGName .= "1"
