@@ -6,7 +6,12 @@ If !InStr(FileExist("File Maker Output"), "D") {
     MsgBox, Directory doesn't exist: File Maker Output!
     ExitApp
 }
-SetWorkingDir, %A_ScriptDir%\File Maker Output
+
+; Delete Jobs.txt file if it exists
+If FileExist("Jobs.txt")
+    FileDelete, Jobs.txt
+
+SetWorkingDir, %A_ScriptDir%
 
 ; Starter gui
 Gui, New
@@ -55,11 +60,11 @@ ButtonYes: ; Label for making files
 Gui, Submit
 
 ; Error Detection
-If (!(Mod(FileSize, 1) = 0)) {
+If !(Mod(FileSize, 1) = 0) {
     MsgBox, FileSize must be a whole number!
     ExitApp
 }
-If (!(Mod(Amount, 1) = 0)) {
+If !(Mod(Amount, 1) = 0) {
     MsgBox, Amount must be a whole number!
     ExitApp
 }
@@ -132,7 +137,7 @@ If HasCustomText {
     }
 }
 
-; Make file(s)
+; Make original file
 OGName := Name
 If !(IsCopy) {
     OGName .= "1"
@@ -146,6 +151,22 @@ If !(IsCopy) {
     }
 }
 
+; Create Jobs
+AmountEach := Floor(Amount / 5)
+AmountEachRemainder := Mod(Amount, 5)
+Jobs := []
+Loop, 5 {
+    If (A_Index <= AmountEachRemainder)
+        Jobs.push(AmountEach + 1)
+    Else
+        Jobs.push(AmountEach)
+}
+
+For Key, Num in Jobs {
+    FileAppend, %Num%`n, Jobs.txt
+}
+
+SetWorkingDir, %A_ScriptDir%\File Maker Output
 GuiControl,, FileProgress, 0
 GuiControl, -Range, FileProgress
 GuiControl, +Range0-%Amount%, FileProgress
