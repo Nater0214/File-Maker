@@ -1,4 +1,4 @@
-; Initialization
+; Setup
 #SingleInstance, Force
 
 ; Check if output directory exists
@@ -33,7 +33,7 @@ Txt .= Ext
 If FileExist(Txt) { ; Check if the file already exists
     Gui, New
     Gui, Add, Text, x5 y5 w350 h20, File with the same name found. Do you want to copy that file instead?
-    Gui, Add, Button, x5 y20 w175 h20, Yes
+    Gui, Add, Button, x5 y20 w175 h20 Default, Yes
     Gui, Add, Button, x180 y20 w175 h20, No
     Gui, Show, w360 h50
     IsCopy := True
@@ -41,7 +41,7 @@ If FileExist(Txt) { ; Check if the file already exists
 } Else If HasCustomText { ; Ask for custom text if the user wanted it
     Gui, New
     Gui, Add, Edit, x5 y5 w350 h100 r6 Limit1024 vCustomText, Put custom text here
-    Gui, Add, Button, x5 y105 w350 h20, Done
+    Gui, Add, Button, x5 y105 w350 h20 Default, Done
     Gui, Show, w360 h130
 } Else {
     IsCopy := False
@@ -136,6 +136,7 @@ If HasCustomText {
         }
     }
 }
+Gui, Submit
 
 ; Make original file
 OGName := Name
@@ -166,20 +167,10 @@ For Key, Num in Jobs {
     FileAppend, %Num%`n, Jobs.txt
 }
 
-SetWorkingDir, %A_ScriptDir%\File Maker Output
-GuiControl,, FileProgress, 0
-GuiControl, -Range, FileProgress
-GuiControl, +Range0-%Amount%, FileProgress
-Loop % Amount - 1 {
-    OutputName := Name
-    OutputName .= A_Index + 1
-    FileCopy, %OGName%.%Ext%, %OutputName%.%Ext%
-    GuiControl,, FileProgress, +1
-    Txt := A_Index + 1
-    GuiControl, Text, ProgressLabel, %Txt%/%Amount% Files
-    Output := ""
-}
-Gui, Submit
+; Add additional information to Jobs.txt
+FileAppend, %Name%, Jobs.txt
+FileAppend, %OGName%`n, Jobs.txt
+FileAppend, %Ext%`n, Jobs.txt
 ExitApp
 Return
 
